@@ -9,16 +9,24 @@ import 'package:myjob/module/chat_model.dart';
 import 'package:myjob/module/user_model.dart';
 // import 'package:myjob/screens/caht/users_chat.dart';
 
-class ChattingScreen extends StatelessWidget {
+class ChattingScreen extends StatefulWidget {
   UserModel? model;
 
   ChattingScreen({this.model});
+
+  @override
+  State<ChattingScreen> createState() => _ChattingScreenState();
+}
+
+class _ChattingScreenState extends State<ChattingScreen> {
   String textController = "";
+
   String? text;
+
   @override
   Widget build(BuildContext context) {
     return Builder(builder: (context) {
-      HomeCubit.get(context).getMessage(receiverId: model!.uid);
+      HomeCubit.get(context).getMessage(receiverId: widget.model!.uid);
       return BlocConsumer<HomeCubit, HomeStates>(
         listener: (context, state) {},
         builder: (context, state) {
@@ -30,13 +38,14 @@ class ChattingScreen extends StatelessWidget {
                 children: [
                   CircleAvatar(
                     radius: 25,
-                    backgroundImage: NetworkImage("${model!.profileImage}"),
+                    backgroundImage:
+                        NetworkImage("${widget.model!.profileImage}"),
                   ),
                   SizedBox(
                     width: 15,
                   ),
                   Text(
-                    "${model!.name}",
+                    "${widget.model!.name}",
                     style: TextStyle(color: Colors.black),
                   )
                 ],
@@ -64,12 +73,13 @@ class ChattingScreen extends StatelessWidget {
                   Row(
                     children: [
                       CircleAvatar(
-                        backgroundImage: NetworkImage("${model!.profileImage}"),
+                        backgroundImage:
+                            NetworkImage("${widget.model!.profileImage}"),
                       ),
                       SizedBox(
                         width: 15,
                       ),
-                      Text("${model!.name}")
+                      Text("${widget.model!.name}")
                     ],
                   ),
                   SizedBox(
@@ -114,7 +124,11 @@ class ChattingScreen extends StatelessWidget {
                               return null;
                             },
                             onChanged: (value) {
-                              text = value;
+                              // setState(() {
+                              //   text = value;
+                              // });
+                              HomeCubit.get(context)
+                                  .changTextMessage(value.toString());
                             },
                             decoration: InputDecoration(
                                 border: InputBorder.none,
@@ -123,13 +137,15 @@ class ChattingScreen extends StatelessWidget {
                         ),
                         Spacer(),
                         MaterialButton(
-                          onPressed: () {
-                            // await HomeCubit.get(context).creatChatting(
-                            //   dateTime: DateTime.now().toString(),
-                            //   receiverId: model!.uid,
-                            //   text: textController.toString(),
-                            // );
-                            print("Message : ${text.toString()}");
+                          onPressed: () async {
+                            await HomeCubit.get(context).creatChatting(
+                              dateTime: DateTime.now().toString(),
+                              receiverId: widget.model!.uid,
+                              text:
+                                  HomeCubit.get(context).textMessage.toString(),
+                            );
+                            print(
+                                "Message : ${HomeCubit.get(context).textMessage.toString()}");
                           },
                           color: Colors.blue,
                           minWidth: 50,

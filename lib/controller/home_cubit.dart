@@ -432,7 +432,7 @@ class HomeCubit extends Cubit<HomeStates> {
     String? dateTime,
     String? receiverId,
     String? text,
-  })async{
+  }) async {
     emit(CreateMessageLoadingState());
     print("CreateMessageLoadingState");
     ChatModel chatModel = ChatModel(
@@ -456,7 +456,7 @@ class HomeCubit extends Cubit<HomeStates> {
       emit(CreateMessageErrorState());
     });
 
-   await FirebaseFirestore.instance
+    await FirebaseFirestore.instance
         .collection("user")
         .doc(receiverId)
         .collection("chat")
@@ -475,18 +475,18 @@ class HomeCubit extends Cubit<HomeStates> {
 
   List<ChatModel> message = [];
 
-  void getMessage({
+  Future? getMessage({
     @required String? receiverId,
-  }) {
+  }) async {
     emit(GetMessageLoadingState());
     print("GetMessageLoadingState");
-    FirebaseFirestore.instance
+    await FirebaseFirestore.instance
         .collection("user")
         .doc(userModel!.uid)
         .collection("chat")
         .doc(receiverId)
         .collection("message")
-        // .orderBy("dateTime")
+        .orderBy("dateTime")
         .snapshots()
         .listen((event) {
       message = [];
@@ -496,6 +496,13 @@ class HomeCubit extends Cubit<HomeStates> {
       emit(GetMessageSuccessState());
       print("GetMessageSuccessState");
     });
+  }
+
+  String? textMessage;
+  void changTextMessage(String text) {
+    textMessage = text;
+    emit(ChangeTextMessage());
+    print("ChangeTextMessage");
   }
 
   List<Widget> listScreens = [

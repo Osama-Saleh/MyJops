@@ -119,6 +119,8 @@ class GetMessageLoadingState extends HomeStates {}
 
 class GetMessageSuccessState extends HomeStates {}
 
+class ChangeTextMessage extends HomeStates {}
+
 
 
 class ChangeButtonBarState extends HomeStates {}
