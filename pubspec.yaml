@@ -47,6 +47,9 @@ dependencies:
   awesome_dialog: ^3.0.2
   firebase_storage: ^11.0.11
   conditional_builder_null_safety: ^0.0.6
+  firebase_messaging: ^14.2.4
+  cloud_functions: ^4.0.10
+  
   
   
 

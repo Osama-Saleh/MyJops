@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_is_empty, avoid_print
 
 import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:myjob/controller/home_cubit.dart';
@@ -8,9 +9,26 @@ import 'package:myjob/controller/home_states.dart';
 import 'package:myjob/module/user_model.dart';
 import 'package:myjob/screens/caht/chattig_screen.dart';
 
-class UsersChat extends StatelessWidget {
+class UsersChat extends StatefulWidget {
   const UsersChat({super.key});
 
+  @override
+  State<UsersChat> createState() => _UsersChatState();
+}
+
+class _UsersChatState extends State<UsersChat> {
+
+  @override
+  void initState() {
+    super.initState();
+    // FirebaseMessaging messaging = FirebaseMessaging.instance;
+    // messaging.getToken().then((value) {
+    //   print("devise token  is : $value");
+    // }).catchError((error) {
+    //   print("Error not have device token");
+    // });
+  }
+  
   @override
   Widget build(BuildContext context) {
     return Builder(builder: (context) {

@@ -5,9 +5,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:myjob/controller/home_cubit.dart';
 import 'package:myjob/controller/home_states.dart';
 import 'package:myjob/module/chat_model.dart';
-
 import 'package:myjob/module/user_model.dart';
 // import 'package:myjob/screens/caht/users_chat.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 class ChattingScreen extends StatefulWidget {
   UserModel? model;
@@ -22,6 +22,8 @@ class _ChattingScreenState extends State<ChattingScreen> {
   String textController = "";
 
   String? text;
+
+  
 
   @override
   Widget build(BuildContext context) {
