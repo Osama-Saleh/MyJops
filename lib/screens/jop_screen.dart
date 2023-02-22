@@ -26,7 +26,8 @@ class _JopScreenState extends State<JopScreen> {
       builder: (context, state) {
         return Scaffold(
             body: ConditionalBuilder(
-          condition: HomeCubit.get(context).posts.length > 0 && HomeCubit.get(context).userModel != null,
+          condition: HomeCubit.get(context).posts.length > 0 &&
+              HomeCubit.get(context).userModel != null,
           builder: (context) {
             return ListView.builder(
               itemBuilder: (context, index) {
@@ -329,7 +330,8 @@ Widget buildItems(context, PostModel postModel, index) {
                               SizedBox(
                                 width: 5,
                               ),
-                              Text("${HomeCubit.get(context).countComments[index]} Comments")
+                              Text(
+                                  "${HomeCubit.get(context).countComments[index]} Comments")
                             ],
                           ),
                         ),
@@ -367,9 +369,10 @@ Widget buildItems(context, PostModel postModel, index) {
                       defaultMaterialButton(
                         onPressed: () {
                           if (formkey.currentState!.validate()) {
-                            HomeCubit.get(context).commentPosts(
-                                HomeCubit.get(context).postsId[index],
-                                commentController.text);
+                          HomeCubit.get(context).commentPosts(
+                              HomeCubit.get(context).postsId[index],
+                              commentController.text);
+                          // HomeCubit.get(context).getComments();
                           }
                           return null;
                         },

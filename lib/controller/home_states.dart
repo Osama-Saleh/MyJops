@@ -101,6 +101,12 @@ class CommentPostSuccessState extends HomeStates {}
 
 class CommentPostErrorState extends HomeStates {}
 
+class GetCommmentPostLoadingState extends HomeStates {}
+
+class GetCommmentPostSuccessState extends HomeStates {}
+
+class GetCommmentPostErrorState extends HomeStates {}
+
 // * get all Users
 
 class GetAllUsersLoadingState extends HomeStates {}

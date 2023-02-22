@@ -8,6 +8,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:myjob/components.dart';
 import 'package:myjob/controller/home_states.dart';
 import 'package:myjob/module/chat_model.dart';
+import 'package:myjob/module/comment_model.dart';
 import 'package:myjob/module/post_model.dart';
 import 'package:myjob/module/user_model.dart';
 import 'package:myjob/screens/add_jop_screen.dart';
@@ -332,11 +333,14 @@ class HomeCubit extends Cubit<HomeStates> {
   List<int> countLikes = [];
   List<int> countComments = [];
   List<String> postsId = [];
+  List<CommentModel> commentText = [];
   Future getAllPosts() async {
     // posts = [];
     emit(GetAllPostsLoadingState());
     await FirebaseFirestore.instance.collection("posts").get().then((value) {
       value.docs.forEach((items) {
+        postsId.add(items.id);
+        print("post id ${postsId}");
         items.reference
             .collection("like")
             .get()
@@ -353,17 +357,21 @@ class HomeCubit extends Cubit<HomeStates> {
         });
         items.reference.collection("comments").get().then((value) {
           countComments.add(value.docs.length);
-          print("count of comment ${countComments}");
-          postsId.add(items.id);
+          print("countComments : ${countComments}");
+          value.docs.forEach((element) {
+            commentText.add(CommentModel.fromJson(element.data()));
+            print("******************");
+          });
+            print(commentText[4].text);
           // posts.add(PostModel.fromJson(items.data()));
         }).catchError((error) {
-          print("GetAllPostsErrorState 2 $error");
+          print("GetAllPostsErrorState 2 ${error.toString()}");
           emit(GetAllPostsErrorState());
         });
       });
       print("posts of length ${posts.length}");
     }).catchError((error) {
-      print("GetAllPostsErrorState $error");
+      print("GetAllPostsErrorState ${error.toString()}");
       emit(GetAllPostsErrorState());
     });
   }
@@ -386,25 +394,49 @@ class HomeCubit extends Cubit<HomeStates> {
     }
   }
 
-  void commentPosts(String postid, String text) {
+  void commentPosts(String postid, String text) async {
     print("CommentPostLoadingState");
     emit(CommentPostLoadingState());
+    CommentModel commentModel = CommentModel(text: text);
     final value = FirebaseFirestore.instance
         .collection("posts")
         .doc(postid)
         .collection("comments")
-        .add({"text": text});
+        .add(commentModel.toMap());
     emit(CommentPostSuccessState());
     print("CommentPostSuccessState");
-    // .then((value) {
-    //   emit(CommentPostSuccessState());
-    //   print("CommentPostSuccessState");
-    // })
-    // .catchError((error) {
-    //   print("CommentPostErrorState ${error.toString()}");
-    //   emit(CommentPostErrorState());
-    // });
+    //  getComments();
   }
+
+  // Future getComments() async {
+  //   print("GetCommmentPostLoadingState");
+  //   emit(GetCommmentPostLoadingState());
+
+  //   try {
+  //     final value = await FirebaseFirestore.instance
+  //         .collection("posts")
+  //         .get()
+  //         .then((value) {
+  //       value.docs.forEach((element) {
+  //         element.data();
+  //       });
+  //     });
+  //     // value.docs.forEach((element) async {
+  //     //   final item = await element.reference.collection("comments").get();
+  //     //   item.docs.forEach((element) {
+  //     //     commentText.add(CommentModel.fromJson(element.data()));
+  //     //     print("comments Text ${commentText}");
+  //     //   });
+  //     // });
+  //     print("My text${commentText}");
+
+  //     emit(GetCommmentPostSuccessState());
+  //     print("GetCommmentPostSuccessState");
+  //   } catch (error) {
+  //     print("GetCommmentPostErrorState ${error.toString()}");
+  //     emit(GetCommmentPostErrorState());
+  //   }
+  // }
 
   // * chat user
 
