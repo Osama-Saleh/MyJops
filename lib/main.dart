@@ -12,8 +12,6 @@ import 'package:myjob/screens/login_Screen.dart';
 import 'package:myjob/shared/shared_pref.dart';
 
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  
-
   print("Handling a background message: ${message.messageId}");
 }
 
@@ -22,18 +20,25 @@ void main() async {
   SharedPreference.initialSharedPreference();
   await Firebase.initializeApp();
 
+// //* get device token
   String? deviceToken = await FirebaseMessaging.instance.getToken();
   print("device token: ${deviceToken}");
-  
+
 // * send notification when appliccatio is open
 // * forward FCM
   FirebaseMessaging.onMessage.listen((event) {
     print("on Message :  ${event.data}");
+    print("data notifictation body :  ${event.notification!.body}");
   });
   // * send notification when application is open in background or closed
   // * when click on notification open the app
   FirebaseMessaging.onMessageOpenedApp.listen((event) {
     print("onMessageOpenedApp :  ${event.data}");
+    // Navigator.push(
+    //     context,
+    //     MaterialPageRoute(
+    //       builder: (context) => UsersChat(),
+    //     ));
   });
 
   // * background FCM
@@ -60,8 +65,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => HomeCubit()
-        ..getUserData()
-        ..getAllPosts(),
+        ..getUserData(),
+        // ..getAllPosts(),
       child: BlocConsumer<HomeCubit, HomeStates>(
         listener: (context, state) {},
         builder: (context, state) {

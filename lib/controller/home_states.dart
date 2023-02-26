@@ -95,6 +95,20 @@ class LikePostSuccessState extends HomeStates {}
 
 class LikePostErrorState extends HomeStates {}
 
+class UpdateLikePostLoadingState extends HomeStates {}
+
+class UpdateLikePostSuccessState extends HomeStates {}
+
+class UpdateLikePostErrorState extends HomeStates {}
+
+class GetLikePostLoadingState extends HomeStates {}
+
+class GetLikePostSuccessState extends HomeStates {}
+
+class GetLikePostErrorState extends HomeStates {}
+
+
+
 class CommentPostLoadingState extends HomeStates {}
 
 class CommentPostSuccessState extends HomeStates {}

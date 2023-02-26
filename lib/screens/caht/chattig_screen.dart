@@ -1,4 +1,5 @@
-// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, must_be_immutable, curly_braces_in_flow_control_structures
+// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, must_be_immutable, curly_braces_in_flow_control_structures, avoid_unnecessary_containers, avoid_print, use_build_context_synchronously
+
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -7,7 +8,7 @@ import 'package:myjob/controller/home_states.dart';
 import 'package:myjob/module/chat_model.dart';
 import 'package:myjob/module/user_model.dart';
 // import 'package:myjob/screens/caht/users_chat.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:myjob/network/dio.dart';
 
 class ChattingScreen extends StatefulWidget {
   UserModel? model;
@@ -22,8 +23,6 @@ class _ChattingScreenState extends State<ChattingScreen> {
   String textController = "";
 
   String? text;
-
-  
 
   @override
   Widget build(BuildContext context) {
@@ -146,6 +145,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
                               text:
                                   HomeCubit.get(context).textMessage.toString(),
                             );
+                            DoiHelper.sendNorify(body:HomeCubit.get(context).textMessage );
                             print(
                                 "Message : ${HomeCubit.get(context).textMessage.toString()}");
                           },

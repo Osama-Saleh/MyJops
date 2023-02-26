@@ -19,7 +19,6 @@ class SharedPreference {
   }
 
   
-
   
 
    static String? getDataSt(
@@ -30,4 +29,8 @@ class SharedPreference {
     // final sharedPreferences = await SharedPreferences.getInstance();
    return sharedPreferences!.getString(key!);
   }
+
+
+
+  
 }

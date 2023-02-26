@@ -1,4 +1,4 @@
-// ignore_for_file: non_constant_identifier_names, avoid_print, prefer_const_constructors, unused_local_variable, avoid_function_literals_in_foreach_calls, unnecessary_brace_in_string_interps, curly_braces_in_flow_control_structures
+// ignore_for_file: non_constant_identifier_names, avoid_print, prefer_const_constructors, unused_local_variable, avoid_function_literals_in_foreach_calls, unnecessary_brace_in_string_interps, curly_braces_in_flow_control_structures, await_only_futures
 
 import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -327,55 +327,6 @@ class HomeCubit extends Cubit<HomeStates> {
     emit(RemovePostImageState());
   }
 
-  // get all postes
-
-  List<PostModel> posts = [];
-  List<int> countLikes = [];
-  List<int> countComments = [];
-  List<String> postsId = [];
-  List<CommentModel> commentText = [];
-  Future getAllPosts() async {
-    // posts = [];
-    emit(GetAllPostsLoadingState());
-    await FirebaseFirestore.instance.collection("posts").get().then((value) {
-      value.docs.forEach((items) {
-        postsId.add(items.id);
-        print("post id ${postsId}");
-        items.reference
-            .collection("like")
-            .get()
-            .then((value) => {
-                  countLikes.add(value.docs.length),
-                  postsId.add(items.id),
-                  posts.add(PostModel.fromJson(items.data())),
-                  emit(GetAllPostsSuccessState()),
-                  print("${value.docs.length}")
-                })
-            .catchError((error) {
-          print("GetAllPostsErrorState 1 $error");
-          emit(GetAllPostsErrorState());
-        });
-        items.reference.collection("comments").get().then((value) {
-          countComments.add(value.docs.length);
-          print("countComments : ${countComments}");
-          value.docs.forEach((element) {
-            commentText.add(CommentModel.fromJson(element.data()));
-            print("******************");
-          });
-            print(commentText[4].text);
-          // posts.add(PostModel.fromJson(items.data()));
-        }).catchError((error) {
-          print("GetAllPostsErrorState 2 ${error.toString()}");
-          emit(GetAllPostsErrorState());
-        });
-      });
-      print("posts of length ${posts.length}");
-    }).catchError((error) {
-      print("GetAllPostsErrorState ${error.toString()}");
-      emit(GetAllPostsErrorState());
-    });
-  }
-
   Future likePost(String postid) async {
     try {
       emit(LikePostLoadingState());
@@ -388,16 +339,159 @@ class HomeCubit extends Cubit<HomeStates> {
           .set({"like": true});
       emit(LikePostSuccessState());
       print("LikePostSuccessState");
+      getLike(postid);
     } catch (e) {
       emit(LikePostErrorState());
       print("LikePostErrorState");
     }
   }
 
-  void commentPosts(String postid, String text) async {
+  // get all postes
+
+  List<PostModel> posts = [];
+  List<int> countLikes = [];
+  // List<int> countComments = [];
+  List<String> postsId = [];
+  // List<CommentModel> commentText = [];
+  Future getAllPosts() async {
+    // commentText = [];
+    // countComments = [];
+    emit(GetAllPostsLoadingState());
+    posts = [];
+    postsId = [];
+    countLikes = [];
+    await FirebaseFirestore.instance
+        .collection("posts")
+        .snapshots()
+        .listen((event) {
+      event.docs.forEach((element) {
+        element.reference.collection("like").get().then((value) => {
+              countLikes.add(value.docs.length),
+              postsId.add(element.id),
+              posts.add(PostModel.fromJson(element.data())),
+              emit(GetAllPostsSuccessState()),
+              emit(GetAllPostsSuccessState()),
+              print("GetAllPostsSuccessState"),
+              print("post of leanght ${postsId.length}"),
+              print("post id ${postsId}"),
+              print(countLikes),
+            });
+      });
+    });
+    // .then((value) {
+    //   value.docs.forEach((items) {
+    //     postsId.add(items.id);
+    //     print("post id ${postsId}");
+    //     print("post of leanght ${postsId.length}");
+    //     posts.add(PostModel.fromJson(items.data()));
+    //     emit(GetAllPostsSuccessState());
+    //     print("GetAllPostsSuccessState");
+    //   items.reference
+    //       .collection("like")
+    //       .get()
+    //       .then((value) => {
+    //             countLikes.add(value.docs.length),
+    //             postsId.add(items.id),
+    //             posts.add(PostModel.fromJson(items.data())),
+    //             emit(GetAllPostsSuccessState()),
+    //           })
+    //       .catchError((error) {
+    //     print("GetAllPostsErrorState 1 $error");
+    //     emit(GetAllPostsErrorState());
+    //   });
+    //   items.reference.collection("comments").get().then((value) {
+    //     countComments.add(value.docs.length);
+    //     print("countComments : ${countComments}");
+    //     value.docs.forEach((element) {
+    //       commentText.add(CommentModel.fromJson(element.data()));
+    //     });
+    //     print("*commentText${commentText.length}");
+    //   }).catchError((error) {
+    //     print("GetAllPostsErrorState 2 ${error.toString()}");
+    //     emit(GetAllPostsErrorState());
+    //   });
+    //   });
+    // }).catchError((error) {
+    //   print("GetAllPostsErrorState ${error.toString()}");
+    //   emit(GetAllPostsErrorState());
+    // });
+  }
+
+  // ! try test
+  // Future creapost(D) {
+  //   PostModel PM = PostModel(
+  //     dateTime: dateTime,
+  //     imageProfile: imagprofile,
+  //     imagepost: imagepost,
+  //     name: name,
+  //     postsId: idpost,
+  //     text: text,
+
+  //   );
+  // }
+  // ! end try test
+  // bool isLike = true;
+
+  // List<int> countLikes = [];
+  Future getLike(String postid) async {
+    await FirebaseFirestore.instance
+        .collection("posts")
+        .doc(postid)
+        .collection("like")
+        .snapshots()
+        .listen((event) {
+      // countLikes.add(event.docs.length);
+      event.docs.forEach((element) {
+        print("like data ${element.data()}");
+      });
+      // print("count of likes ${countLikes.length}");
+    });
+  }
+
+  // Future updateLikePost(String postid) async {
+  //   try {
+  //     isLike = !isLike;
+  //     emit(UpdateLikePostLoadingState());
+  //     print("UpdateLikePostLoadingState");
+  //     final value = await FirebaseFirestore.instance
+  //         .collection("posts")
+  //         .doc(postid)
+  //         .collection("like")
+  //         .doc(userModel!.uid)
+  //         .update({"like": isLike});
+
+  //     emit(UpdateLikePostSuccessState());
+  //     print("UpdateLikePostSuccessState");
+  //   } catch (error) {
+  //     emit(UpdateLikePostErrorState());
+  //     print("UpdateLikePostErrorState ${error.toString()}");
+  //   }
+  // }
+
+  // Future getLikePost(String postid) async {
+  //   try {
+  //     emit(GetLikePostLoadingState());
+  //     print("GetLikePostLoadingState");
+  //     final value = await FirebaseFirestore.instance
+  //         .collection("posts")
+  //         .doc(postid)
+  //         .collection("like")
+  //         .doc(userModel!.uid)
+  //         .get();
+  //     print("Git Like Post ${value.data()}");
+  //     emit(GetLikePostSuccessState());
+  //     print("GetLikePostSuccessState");
+  //   } catch (error) {
+  //     emit(GetLikePostErrorState());
+  //     print("GetLikePostErrorState ${error.toString()}");
+  //   }
+  // }
+
+  // * create Comment
+  void commentPosts(String postid, String text, String timeDate) async {
     print("CommentPostLoadingState");
     emit(CommentPostLoadingState());
-    CommentModel commentModel = CommentModel(text: text);
+    CommentModel commentModel = CommentModel(text: text, timeDate: timeDate);
     final value = FirebaseFirestore.instance
         .collection("posts")
         .doc(postid)
@@ -421,13 +515,13 @@ class HomeCubit extends Cubit<HomeStates> {
   //         element.data();
   //       });
   //     });
-  //     // value.docs.forEach((element) async {
-  //     //   final item = await element.reference.collection("comments").get();
-  //     //   item.docs.forEach((element) {
-  //     //     commentText.add(CommentModel.fromJson(element.data()));
-  //     //     print("comments Text ${commentText}");
-  //     //   });
-  //     // });
+  // value.docs.forEach((element) async {
+  //   final item = await element.reference.collection("comments").get();
+  //   item.docs.forEach((element) {
+  //     commentText.add(CommentModel.fromJson(element.data()));
+  //     print("comments Text ${commentText}");
+  //   });
+  // });
   //     print("My text${commentText}");
 
   //     emit(GetCommmentPostSuccessState());
@@ -553,6 +647,7 @@ class HomeCubit extends Cubit<HomeStates> {
   int currenIndex = 0;
   void changeButtonBar(int index) {
     if (index == 2) getAllUser();
+    if (index == 0) getAllPosts();
     currenIndex = index;
     emit(ChangeButtonBarState());
   }

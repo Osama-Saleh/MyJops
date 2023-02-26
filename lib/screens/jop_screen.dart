@@ -1,7 +1,8 @@
-// ignore_for_file: prefer_const_constructors, sort_child_properties_last, prefer_const_literals_to_create_immutables, duplicate_ignore, avoid_unnecessary_containers, missing_required_param, must_be_immutable, sized_box_for_whitespace, avoid_single_cascade_in_expression_statements, unnecessary_cast, avoid_print, prefer_is_empty
+// ignore_for_file: prefer_const_constructors, sort_child_properties_last, prefer_const_literals_to_create_immutables, duplicate_ignore, avoid_unnecessary_containers, missing_required_param, must_be_immutable, sized_box_for_whitespace, avoid_single_cascade_in_expression_statements, unnecessary_cast, avoid_print, prefer_is_empty, unused_local_variable, prefer_typing_uninitialized_variables
 
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:myjob/components.dart';
@@ -9,6 +10,7 @@ import 'package:myjob/controller/home_cubit.dart';
 import 'package:myjob/controller/home_states.dart';
 import 'package:myjob/module/post_model.dart';
 import 'package:myjob/module/user_model.dart';
+import 'package:myjob/screens/add_jop_screen.dart';
 
 class JopScreen extends StatefulWidget {
   const JopScreen({super.key});
@@ -17,31 +19,38 @@ class JopScreen extends StatefulWidget {
   State<JopScreen> createState() => _JopScreenState();
 }
 
+
+
+
 class _JopScreenState extends State<JopScreen> {
-  // JopScreen({super.key});
+  
+
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<HomeCubit, HomeStates>(
-      listener: (context, state) {},
-      builder: (context, state) {
-        return Scaffold(
-            body: ConditionalBuilder(
-          condition: HomeCubit.get(context).posts.length > 0 &&
-              HomeCubit.get(context).userModel != null,
-          builder: (context) {
-            return ListView.builder(
-              itemBuilder: (context, index) {
-                return buildItems(
-                    context, HomeCubit.get(context).posts[index], index);
-              },
-              itemCount: HomeCubit.get(context).posts.length,
-            );
-          },
-          fallback: (context) => Center(child: CircularProgressIndicator()),
-        ));
-      },
-    );
+    return Builder(builder: (context) {
+      HomeCubit.get(context).getAllPosts();
+      return BlocConsumer<HomeCubit, HomeStates>(
+        listener: (context, state) {},
+        builder: (context, state) {
+          return Scaffold(
+              body: ConditionalBuilder(
+            condition: HomeCubit.get(context).posts.length > 0,
+            builder: (context) {
+              return ListView.builder(
+                itemBuilder: (context, index) {
+                  return buildItems(
+                      context, HomeCubit.get(context).posts[index], index);
+                },
+                itemCount: HomeCubit.get(context).posts.length,
+              );
+            },
+            fallback: (context) => Center(child: CircularProgressIndicator()),
+          ));
+        },
+      );
+    });
   }
+  
 }
 
 Widget buildDialog(context, UserModel userModel, PostModel postModel) {
@@ -303,6 +312,7 @@ Widget buildItems(context, PostModel postModel, index) {
                     children: [
                       InkWell(
                         onTap: () async {
+                          
                           await HomeCubit.get(context)
                               .likePost(HomeCubit.get(context).postsId[index]);
                           // await  HomeCubit.get(context).getAllPosts();
@@ -330,8 +340,8 @@ Widget buildItems(context, PostModel postModel, index) {
                               SizedBox(
                                 width: 5,
                               ),
-                              Text(
-                                  "${HomeCubit.get(context).countComments[index]} Comments")
+                              Text("10")
+                              // "${HomeCubit.get(context).countComments[index]} Comments")
                             ],
                           ),
                         ),
@@ -339,6 +349,33 @@ Widget buildItems(context, PostModel postModel, index) {
                     ],
                   ),
                 ),
+                // if (HomeCubit.get(context).countComments.length > 0)
+                // Container(
+                //   height: 150,
+                //   child: ListView.builder(
+                //     itemCount: HomeCubit.get(context).commentText.length,
+                //     scrollDirection: Axis.vertical,
+                //     itemBuilder: (context, index) {
+                //       return Padding(
+                //         padding: const EdgeInsets.all(8.0),
+                //         child: Row(
+                //           children: [
+                //             CircleAvatar(
+                //               radius: 15,
+                //               backgroundImage: NetworkImage(
+                //                   "${HomeCubit.get(context).userModel!.profileImage}"),
+                //             ),
+                //             SizedBox(
+                //               width: 10,
+                //             ),
+                //             Text(
+                //                 "${HomeCubit.get(context).commentText[index].text}"),
+                //           ],
+                //         ),
+                //       );
+                //     },
+                //   ),
+                // ),
                 Divider(),
                 Padding(
                   padding: const EdgeInsets.all(10),
@@ -369,10 +406,11 @@ Widget buildItems(context, PostModel postModel, index) {
                       defaultMaterialButton(
                         onPressed: () {
                           if (formkey.currentState!.validate()) {
-                          HomeCubit.get(context).commentPosts(
-                              HomeCubit.get(context).postsId[index],
-                              commentController.text);
-                          // HomeCubit.get(context).getComments();
+                            HomeCubit.get(context).commentPosts(
+                                HomeCubit.get(context).postsId[index],
+                                commentController.text,
+                                DateTime.now().toString());
+                            // HomeCubit.get(context).getComments();
                           }
                           return null;
                         },
@@ -398,7 +436,7 @@ Widget buildItems(context, PostModel postModel, index) {
     ),
   );
 }
-    // },
-    // itemCount: 3,
-  // );
-// }
+
+Widget commentItems() {
+  return Text("data");
+}
